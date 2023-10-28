@@ -1,0 +1,20 @@
+{
+  "name": "jobportal",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "you can search millions of jobs online to find the next step in your career. With tools for job search, resumes, company reviews",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "author": "Rushabh Gandhi",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongoose": "^7.6.3",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.0.1"
+  }
+}
