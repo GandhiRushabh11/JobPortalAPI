@@ -9,11 +9,9 @@ export const register = async (req, res, next) => {
   }
 
   const user = await userModel.create({ firstName, lastName, email, password });
-  //Sending User Data
-  res.status(200).json({
-    success: true,
-    data: user,
-  });
+
+  // Sending Token
+  sendTokenToResponse(user, 200, res);
 };
 
 export const login = async (req, res, next) => {
@@ -35,12 +33,8 @@ export const login = async (req, res, next) => {
   if (!isMatch) {
     return next(new ErrorResponse("Invalid credentials", 401));
   }
-  // Send Token
-
-  res.status(200).json({
-    success: true,
-    data: user.email,
-  });
+  // Sending Token
+  sendTokenToResponse(user, 200, res);
 };
 
 export const updateDetails = async (req, res, next) => {
@@ -50,10 +44,38 @@ export const updateDetails = async (req, res, next) => {
     email: req.body.email,
   };
 
-  const user = await userModel.findByIdAndUpdate(req.params.id, fieldToUpdate, {
+  const user = await userModel.findByIdAndUpdate(req.user._id, fieldToUpdate, {
     new: true,
     runValidators: true,
   });
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
+};
+
+const sendTokenToResponse = (user, statusCode, res) => {
+  //Create Token
+
+  const token = user.getSignedJWTToken();
+
+  //Stroing into Cookies
+
+  const options = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+  };
+  res.status(statusCode).cookie("token", token, options).json({
+    success: true,
+    token,
+  });
+};
+
+export const getMe = async (req, res, next) => {
+  // user is already available in req due to the protect middleware
+  const user = req.user;
   res.status(200).json({
     success: true,
     data: user,
