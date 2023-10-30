@@ -2,13 +2,19 @@ import userModel from "../models/userModel.js";
 import ErrorResponse from "../utils/errorResponse.js";
 
 export const register = async (req, res, next) => {
-  const { firstName, lastName, email, password } = req.body;
+  const { firstName, lastName, email, password, role } = req.body;
 
   if (!firstName || !email || !password) {
     return next(new ErrorResponse(`Please fill required Fields`, 400));
   }
 
-  const user = await userModel.create({ firstName, lastName, email, password });
+  const user = await userModel.create({
+    firstName,
+    lastName,
+    email,
+    password,
+    role,
+  });
 
   // Sending Token
   sendTokenToResponse(user, 200, res);

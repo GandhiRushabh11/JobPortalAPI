@@ -28,8 +28,8 @@ const jobSchema = new mongoose.Schema(
     experienceLevel: {
       type: String,
       required: [true, "Please add a Experience Level"],
-      enum: ["beginner", "intermediate", "advanced"],
-      default: "beginner",
+      enum: ["Beginner", "Intermediate", "Advanced"],
+      default: "Beginner",
     },
     company: {
       type: String,
