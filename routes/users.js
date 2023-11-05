@@ -1,11 +1,21 @@
 import express from "express";
-import { getMe, login, register, updateDetails } from "../controller/auth.js";
+import {
+  forgetPassword,
+  getMe,
+  login,
+  register,
+  resetPassword,
+  updateDetails,
+} from "../controller/auth.js";
 import { protect } from "../middleware/auth.js";
 const router = express.Router();
 
 router.post("/register", register);
 router.post("/login", login);
 //need to change this method after token and middleware
-router.put("/updateDetails/", protect, updateDetails);
+router
+  .put("/updateDetails", protect, updateDetails)
+  .put("/resetPassword/:resettoken", resetPassword);
+router.post("/forgetPassword", forgetPassword);
 router.get("/", protect, getMe);
 export default router;

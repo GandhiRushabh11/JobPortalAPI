@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 const userSchema = new mongoose.Schema(
   {
     firstName: {
@@ -24,6 +25,8 @@ const userSchema = new mongoose.Schema(
       minlength: 6,
       select: false,
     },
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
     role: {
       type: String,
       enum: ["user", "publisher"],
@@ -34,6 +37,9 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    next();
+  }
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
   next();
@@ -49,5 +55,24 @@ userSchema.methods.getSignedJWTToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE,
   });
+};
+
+// getResetPasswordToken for forget Password
+
+userSchema.methods.getResetPasswordToken = function () {
+  let resetToken;
+  resetToken = crypto.randomBytes(20).toString("hex");
+
+  // Hash token and set to resetPasswordToken field
+
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  // Set expire
+  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
 };
 export default mongoose.model("User", userSchema);
