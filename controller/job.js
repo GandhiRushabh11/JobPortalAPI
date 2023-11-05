@@ -107,7 +107,7 @@ export const deleteJob = async (req, res, next) => {
     .json({ success: true, message: "Job deleted Successfully!!!" });
 };
 
-export const getJobs = async (req, res, next) => {
+export const getJob = async (req, res, next) => {
   if (!req.user._id) {
     return next(new ErrorResponse("Not authorized to access this route", 401));
   }
@@ -119,4 +119,14 @@ export const getJobs = async (req, res, next) => {
   }
 
   res.status(200).json({ success: true, total: job.length, data: job });
+};
+
+export const getJobs = async (req, res, next) => {
+  const job = await jobModel.find();
+
+  if (!job) {
+    return next(new ErrorResponse(`No jobs Found!`, 400));
+  }
+
+  res.status(200).json(res.advancedResults);
 };
