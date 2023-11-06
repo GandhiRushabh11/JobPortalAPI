@@ -1,4 +1,5 @@
 import express from "express";
+import multer from "multer";
 import {
   forgetPassword,
   getMe,
@@ -8,9 +9,19 @@ import {
   updateDetails,
 } from "../controller/auth.js";
 import { protect } from "../middleware/auth.js";
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./public/uploads/user");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+const upload = multer({ storage: storage });
 const router = express.Router();
 
-router.post("/register", register);
+router.post("/register", upload.single("ProfilePhoto"), register);
 router.post("/login", login);
 //need to change this method after token and middleware
 router

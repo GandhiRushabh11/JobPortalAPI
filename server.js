@@ -21,7 +21,7 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms")
 );
 app.use(express.json());
-
+app.use(express.urlencoded({ extended: false }));
 //routes
 app.use("/api/v1/users", users);
 app.use("/api/v1/jobs", jobs);

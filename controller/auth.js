@@ -14,6 +14,7 @@ export const register = async (req, res, next) => {
     email,
     password,
     role,
+    profilePhotoURL: `/uploads/user/${req.file.filename}`,
   });
 
   // Sending Token
